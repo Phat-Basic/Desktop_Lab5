@@ -21,5 +21,10 @@ namespace Lab5App
         {
 
         }
+
+        private void frmSinhVien_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
