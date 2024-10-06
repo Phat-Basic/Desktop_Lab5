@@ -1,0 +1,2 @@
+1911991	Trần Văn	Tèo	19/10/2004	CTk46A	93939393	9009.092.34	Địa chỉ bất kỳ	Nam	Đồ án cơ sở, Phương pháp NCKH, Lập trình trên thiết bị di động
+1911992	Nguyễn Thị	Hoa	01/01/2003	CTk46B	83838383	9008.082.34	Địa chỉ bất kỳ	Nữ	Đồ án cơ sở, Phương pháp NCKH, Lập trình trên thiết bị di động
