@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab5App
 {
@@ -13,30 +9,26 @@ namespace Lab5App
         public string Ten { get; set; }
         public DateTime NgaySinh { get; set; }
         public string Lop { get; set; }
-        public int CMND { get; set; }
-        public int SDT { get; set; }
+        public string CMND { get; set; }  // CMND và SDT nên là string do chứa số dài
+        public string SDT { get; set; }
         public string DiaChi { get; set; }
         public bool Phai { get; set; }
-        public string MonHocDangKy { get; set; } // Thêm thuộc tính Môn học
+        public string MonHocDangKy { get; set; }  // Danh sách môn học dưới dạng chuỗi
 
-        public SinhVien()
+        public SinhVien() { }
+
+        public SinhVien(string mssv, string hoTenLot, string ten, DateTime ngaySinh, string lop, string cmnd, string sdt, string diaChi, bool phai, string monHocDangKy)
         {
-
-        }
-
-        public SinhVien(string mSSV, string hoTenLot, string ten, DateTime ngaySinh, string lop, int cMND, int sDT, string diaChi, bool phai, string monHocDangKy)
-        {
-            MSSV = mSSV;
+            MSSV = mssv;
             HoTenLot = hoTenLot;
             Ten = ten;
             NgaySinh = ngaySinh;
             Lop = lop;
-            CMND = cMND;
-            SDT = sDT;
+            CMND = cmnd;
+            SDT = sdt;
             DiaChi = diaChi;
             Phai = phai;
             MonHocDangKy = monHocDangKy;
         }
     }
-
 }

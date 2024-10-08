@@ -1,0 +1,38 @@
+[
+  {
+    "MSSV": "1911001",
+    "HoTenLot": "Nguyen Van",
+    "Ten": "A",
+    "NgaySinh": "2000-01-15T00:00:00",
+    "Lop": "KTPM2019",
+    "CMND": "012345678",
+    "SDT": "0901234567",
+    "DiaChi": "123 Le Loi, TP.HCM",
+    "Phai": true,
+    "MonHocDangKy": "Mạng máy tính, Hệ điều hành"
+  },
+  {
+    "MSSV": "1911002",
+    "HoTenLot": "Le Thi",
+    "Ten": "B",
+    "NgaySinh": "2000-02-20T00:00:00",
+    "Lop": "CNTT2019",
+    "CMND": "987654321",
+    "SDT": "0987654321",
+    "DiaChi": "456 Nguyen Trai, Ha Noi",
+    "Phai": false,
+    "MonHocDangKy": "Lập trình mạng, An toàn và bảo mật hệ thống"
+  },
+  {
+    "MSSV": "1911003",
+    "HoTenLot": "Tran Van",
+    "Ten": "C",
+    "NgaySinh": "2000-03-30T00:00:00",
+    "Lop": "HTTT2019",
+    "CMND": "123456789",
+    "SDT": "0912345678",
+    "DiaChi": "789 Tran Hung Dao, Da Nang",
+    "Phai": true,
+    "MonHocDangKy": "Đồ án cơ sở, Phương pháp NCKH"
+  }
+]

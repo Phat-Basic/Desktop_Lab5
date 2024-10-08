@@ -1,17 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace Lab5App
 {
     public partial class frmSinhVien : Form
     {
+        private List<SinhVien> sinhVienList = new List<SinhVien>();
         public frmSinhVien()
         {
             InitializeComponent();
@@ -85,31 +89,55 @@ namespace Lab5App
 
         }
 
-        private void btnCapNhat_Click(object sender, EventArgs e)
-        {
-            // Cập nhật thông tin sinh viên trong ListView
-            UpdateStudentInListView();
-
-            // Sau khi cập nhật, lưu dữ liệu vào file
-            SaveListViewToFile();
-        }
         private void btnThemMoi_Click(object sender, EventArgs e)
         {
-            // Kiểm tra nếu ít nhất một trường có dữ liệu
-            if (IsAtLeastOneFieldFilled())
+            if (IsInputFieldsValid())
             {
-                // Thêm sinh viên mới vào ListView
                 AddStudentToListView();
-
-                // Sau khi thêm mới, lưu dữ liệu vào file
                 SaveListViewToFile();
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng điền ít nhất một trường thông tin!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
+        private void btnCapNhat_Click(object sender, EventArgs e)
+        {
+            if (IsInputFieldsValid())
+            {
+                UpdateStudentInListView();
+                SaveListViewToFile();
+            }
+        }
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void listView1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void contextMenuStrip1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            // Kiểm tra nếu không có sinh viên nào được chọn
+            if (listView1.SelectedItems.Count == 0)
+            {
+                e.Cancel = true; // Hủy mở menu nếu không có mục nào được chọn
+                return;
+            }
+
+            // Nếu có sinh viên được chọn, thêm item "Xóa" vào ContextMenuStrip
+            contextMenuStrip1.Items.Clear(); // Xóa tất cả các mục cũ trong menu
+
+            ToolStripMenuItem deleteMenuItem = new ToolStripMenuItem("Xóa sinh viên đã chọn");
+            deleteMenuItem.Click += DeleteSelectedStudents; // Gắn sự kiện cho mục "Xóa"
+
+            contextMenuStrip1.Items.Add(deleteMenuItem); // Thêm mục "Xóa" vào menu
+        }
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
@@ -174,7 +202,7 @@ namespace Lab5App
             }
         }
 
-        private void DocTuFile()
+        private void DocTuFileTxt()
         {
             string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = System.IO.Path.Combine(projectDirectory, @"..\..\Sinhvien.txt");
@@ -217,14 +245,63 @@ namespace Lab5App
                 MessageBox.Show("File Sinhvien.txt không tồn tại!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+        private void DocTuFile()
+        {
+            string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(projectDirectory, @"..\..\Sinhvien.json");
+            filePath = Path.GetFullPath(filePath);
+
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    string jsonString = File.ReadAllText(filePath);
+                    List<SinhVien> sinhVienList = JsonConvert.DeserializeObject<List<SinhVien>>(jsonString);
+
+                    if (sinhVienList != null && sinhVienList.Count > 0)
+                    {
+                        listView1.Items.Clear(); // Xóa danh sách hiện tại
+                        foreach (SinhVien sv in sinhVienList)
+                        {
+                            ListViewItem item = new ListViewItem(sv.MSSV);
+                            item.SubItems.Add(sv.HoTenLot);
+                            item.SubItems.Add(sv.Ten);
+                            item.SubItems.Add(sv.NgaySinh.ToString("dd/MM/yyyy"));
+                            item.SubItems.Add(sv.Lop);
+                            item.SubItems.Add(sv.CMND);
+                            item.SubItems.Add(sv.SDT);
+                            item.SubItems.Add(sv.DiaChi);
+                            item.SubItems.Add(sv.Phai ? "Nam" : "Nữ");
+                            item.SubItems.Add(sv.MonHocDangKy);
+
+                            listView1.Items.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("File Sinhvien.json không chứa dữ liệu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Lỗi khi đọc file JSON: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("File Sinhvien.json không tồn tại!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
 
         //Chức năng phụ cho việc nhập xuất
         private bool IsInputFieldsValid()
         {
-            // Kiểm tra các trường bắt buộc phải có dữ liệu
             if (string.IsNullOrWhiteSpace(mtbtMSSV.Text) || mtbtMSSV.Text.Length != 7 ||
                 string.IsNullOrWhiteSpace(mtbCMND.Text) || mtbCMND.Text.Length != 9 ||
-                string.IsNullOrWhiteSpace(mtbSoDT.Text) || mtbSoDT.Text.Length != 10)
+                string.IsNullOrWhiteSpace(mtbSoDT.Text) || mtbSoDT.Text.Length != 10 ||
+                string.IsNullOrWhiteSpace(tbHoTenLot.Text) || string.IsNullOrWhiteSpace(tbTen.Text) ||
+                string.IsNullOrWhiteSpace(cbLop.Text) || string.IsNullOrWhiteSpace(tbDiaChi.Text))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ thông tin với đúng định dạng:\n" +
                                 "- MSSV: 7 chữ số\n- CMND: 9 chữ số\n- Số ĐT: 10 chữ số",
@@ -232,17 +309,16 @@ namespace Lab5App
                 return false;
             }
 
-            // Kiểm tra các trường còn lại
-            if (string.IsNullOrWhiteSpace(tbHoTenLot.Text) || string.IsNullOrWhiteSpace(tbTen.Text) ||
-                string.IsNullOrWhiteSpace(cbLop.Text) || string.IsNullOrWhiteSpace(tbDiaChi.Text))
+            if (checkedListBox1.CheckedItems.Count == 0)
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn ít nhất một môn học!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
             return true;
         }
-         
+
+
         private bool IsAtLeastOneFieldFilled()
         {
             // Kiểm tra nếu có ít nhất một trường nhập liệu có dữ liệu
@@ -297,27 +373,55 @@ namespace Lab5App
 
         private void SetupContextMenuForListView()
         {
-            ContextMenuStrip contextMenu = new ContextMenuStrip();
+            contextMenuStrip1 = new ContextMenuStrip();
 
             ToolStripMenuItem removeItem = new ToolStripMenuItem("Xóa sinh viên đã chọn");
-            removeItem.Click += (s, e) => RemoveSelectedStudents();
+            removeItem.Click += RemoveSelectedStudents; // Event handler
 
-            contextMenu.Items.Add(removeItem);
+            contextMenuStrip1.Items.Add(removeItem);
 
-            // Gán context menu vào listView1
-            listView1.ContextMenuStrip = contextMenu;
+            // Assign the context menu to the ListView
+            listView1.ContextMenuStrip = contextMenuStrip1;
         }
-
-        private void RemoveSelectedStudents()
+        private void RemoveSelectedStudents(object sender, EventArgs e)
         {
-            foreach (ListViewItem selectedItem in listView1.SelectedItems)
+            if (listView1.CheckedItems.Count == 0)
             {
-                listView1.Items.Remove(selectedItem);
+                MessageBox.Show("Vui lòng chọn ít nhất một sinh viên để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
-            // Sau khi xóa, lưu lại thay đổi vào file
-            SaveListViewToFile();
+            // Xác nhận xóa
+            DialogResult confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa các sinh viên đã chọn?",
+                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                // Tạo danh sách các chỉ số cần xóa
+                List<int> indexesToRemove = new List<int>();
+                foreach (ListViewItem item in listView1.CheckedItems)
+                {
+                    indexesToRemove.Add(item.Index);
+                }
+
+                // Xóa từ chỉ số cao nhất để tránh lỗi khi xóa
+                indexesToRemove.Sort();
+                indexesToRemove.Reverse();
+
+                foreach (int index in indexesToRemove)
+                {
+                    listView1.Items.RemoveAt(index);
+                    sinhVienList.RemoveAt(index);
+                }
+
+                // Lưu thay đổi vào file JSON
+                SaveListViewToFile();
+
+                MessageBox.Show("Đã xóa các sinh viên đã chọn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
+
+
 
 
         private void RemoveSubject()
@@ -413,7 +517,7 @@ namespace Lab5App
 
 
 
-        private void SaveListViewToFile()
+        private void SaveListViewToFileTxt()
         {
             string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = System.IO.Path.Combine(projectDirectory, @"..\..\Sinhvien.txt");
@@ -450,6 +554,66 @@ namespace Lab5App
         }
 
 
+        private void SaveListViewToFile()
+        {
+            string projectDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(projectDirectory, @"..\..\Sinhvien.json");
+            filePath = Path.GetFullPath(filePath);
+
+            List<SinhVien> sinhVienList = new List<SinhVien>();
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                // Lấy các giá trị SubItems ra trước để dễ đọc và gán
+                var mssv = item.SubItems[0].Text;
+                var hoTenLot = item.SubItems[1].Text;
+                var ten = item.SubItems[2].Text;
+                var ngaySinhText = item.SubItems[3].Text;
+                var lop = item.SubItems[4].Text;
+                var cmnd = item.SubItems[5].Text;
+                var sdt = item.SubItems[6].Text;
+                var diaChi = item.SubItems[7].Text;
+                var phaiText = item.SubItems[8].Text;
+                var monHoc = item.SubItems[9].Text;
+
+                // Parse ngày sinh
+                DateTime ngaySinh;
+                if (!DateTime.TryParseExact(ngaySinhText, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out ngaySinh))
+                {
+                    MessageBox.Show("Định dạng ngày sinh không hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                // Tạo đối tượng SinhVien và thêm vào danh sách
+                SinhVien sv = new SinhVien
+                {
+                    MSSV = mssv,
+                    HoTenLot = hoTenLot,
+                    Ten = ten,
+                    NgaySinh = ngaySinh,
+                    Lop = lop,
+                    CMND = cmnd,
+                    SDT = sdt,
+                    DiaChi = diaChi,
+                    Phai = phaiText == "Nam",  // Nếu là "Nam", giá trị sẽ là true, nếu không là false
+                    MonHocDangKy = monHoc
+                };
+                sinhVienList.Add(sv);
+            }
+
+            try
+            {
+                // Chuyển danh sách sang định dạng JSON và ghi vào file
+                string jsonString = JsonConvert.SerializeObject(sinhVienList, Newtonsoft.Json.Formatting.Indented);
+                File.WriteAllText(filePath, jsonString);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi lưu file JSON: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
 
 
         //Delete multi selected SinhVien
@@ -465,6 +629,45 @@ namespace Lab5App
             // Sau khi xóa, lưu lại danh sách vào file
             SaveListViewToFile();
         }
+
+        private void DeleteSelectedStudents(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn ít nhất một sinh viên để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Xác nhận việc xóa
+            DialogResult confirmResult = MessageBox.Show("Bạn có chắc chắn muốn xóa các sinh viên đã chọn?",
+                "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                // Thu thập các chỉ mục của sinh viên được chọn để xóa
+                List<int> indexesToRemove = new List<int>();
+                foreach (ListViewItem item in listView1.SelectedItems)
+                {
+                    indexesToRemove.Add(item.Index);
+                }
+
+                // Xóa sinh viên từ chỉ mục cao nhất để tránh lỗi khi cập nhật danh sách
+                indexesToRemove.Sort();
+                indexesToRemove.Reverse();
+
+                foreach (int index in indexesToRemove)
+                {
+                    listView1.Items.RemoveAt(index);
+                    sinhVienList.RemoveAt(index); // Xóa khỏi danh sách sinh viên
+                }
+
+                // Lưu lại dữ liệu sau khi xóa
+                SaveListViewToFile();
+
+                MessageBox.Show("Đã xóa các sinh viên đã chọn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
 
     }
 }

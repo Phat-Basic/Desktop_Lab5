@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ColumnHeader columnHeader1;
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -63,11 +64,13 @@
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // columnHeader1
@@ -343,6 +346,7 @@
             this.columnHeader6,
             this.columnHeader7,
             this.columnHeader9});
+            this.listView1.ContextMenuStrip = this.contextMenuStrip1;
             this.listView1.HideSelection = false;
             this.listView1.HoverSelection = true;
             this.listView1.LabelEdit = true;
@@ -354,6 +358,7 @@
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            this.listView1.Click += new System.EventHandler(this.listView1_Click);
             // 
             // clmMSSV
             // 
@@ -396,6 +401,11 @@
             this.columnHeader7.Text = "Địa chỉ liên lạc";
             this.columnHeader7.Width = 120;
             // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Môn Học";
+            this.columnHeader9.Width = 200;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.listView1);
@@ -407,10 +417,20 @@
             this.groupBox1.Text = "Danh sách sinh viên";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
-            // columnHeader9
+            // contextMenuStrip1
             // 
-            this.columnHeader9.Text = "Môn Học";
-            this.columnHeader9.Width = 200;
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            this.contextMenuStrip1.Click += new System.EventHandler(this.contextMenuStrip1_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "Xoá";
             // 
             // frmSinhVien
             // 
@@ -447,6 +467,7 @@
             this.Text = "Nhập Thông Tin Sinh Viên";
             this.Load += new System.EventHandler(this.frmSinhVien_Load);
             this.groupBox1.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -489,8 +510,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 
